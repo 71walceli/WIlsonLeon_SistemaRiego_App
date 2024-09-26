@@ -1,0 +1,69 @@
+version: "3"
+services:
+  httpd:
+    build:
+      context: .
+      args:
+        UID: 1000
+        GID: 1000
+      dockerfile: httpd.Dockerfile
+    environment:
+      #PHP_MEMORY_LIMIT: 256M
+      #PHP_CLIENT_MAX_BODY_SIZE: 64M
+      #PHP_UPLOAD_MAX_FILESIZE: 64M
+      #UPLOAD_LIMIT: 64M
+      #upload_max_filesize: 64M
+      DB_DATABASE: riegoymonitoreo_w
+      DB_USER: riegoymonitoreo_w
+      DB_PASSWORD: S5n13+1{fKuz'1";foC'NByzW+?;c<u5a
+      DB_HOST: mariadb.tesis.wilsonleon.internal
+      TZ: America/Guayaquil
+    hostname: tesis.wilsonleon.internal
+    #restart: unless-stopped
+    volumes:
+      - ./App:/var/www/html/:rw
+
+  mariadb:
+    environment:
+      MARIADB_USER: riegoymonitoreo_w
+      MARIADB_PASSWORD: S5n13+1{fKuz'1";foC'NByzW+?;c<u5a
+      MARIADB_DATABASE: riegoymonitoreo_w
+      MARIADB_RANDOM_ROOT_PASSWORD: 1
+      TZ: America/Guayaquil
+      API_BASE_URL: http://172.16.0.131
+    hostname: mariadb.tesis.wilsonleon.internal
+    image: mariadb:10.9
+    #restart: unless-stopped
+    user: "1000:0"
+    volumes:
+      - ./MariaDB:/var/lib/mysql
+
+  phpmyadmin:
+    environment:
+      PMA_HOST: mariadb.tesis.wilsonleon.internal
+      UPLOAD_LIMIT: 1024M
+    hostname: phpmyadmin.tesis.wilsonleon.internal
+    image: phpmyadmin:latest
+
+  react-native-dev:
+    build: 
+      context: ../TesisSistemaRiego_AppMovil
+    environment:
+      TZ: America/Guayaquil
+      EXPO_TOKEN: FHgwgb6givFQL4L2wBzMgHYPuQXVEeilH-dtNmki
+      API_BASE_URL: http://tesis.wilsonleon.internal/
+    entrypoint: bash ./boot.sh
+    hostname: react-native-dev.tesis.wilsonleon.internal
+    stop_grace_period: 1s
+    user: "1000:1000"
+    volumes:
+      - ../TesisSistemaRiego_AppMovil:/Project
+      #- ../App/Data:/home/AndroidStudio
+      - ./Common:/Common
+    working_dir: /Project
+
+networks: 
+  #https-proxy:
+  #  external: true
+  backend:
+

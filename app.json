@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "RiegoAutomatizado",
+    "slug": "tesis-sistema-riegos",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/regandoplantas.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "statusBar": {
+        "translucent": true,
+        "backgroundColor": "transparent"
+      },
+      "navigationBar": {
+        "translucent": true,
+        "backgroundColor": "transparent"
+      },
+      "permissions": [
+        "INTERNET"
+      ],
+      "package": "com.prototipo.appprotonpm",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/regandoplantas.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/regandoplantas.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4de807dd-d613-4cd8-a830-325f4f6f7bf2"
+      }
+    },
+    "owner": "antonini44354"
+  }
+}
