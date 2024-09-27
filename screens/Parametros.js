@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, FlatList, StyleSheet, Text, TouchableOpacity, Pressable, TextInput, Alert, ToastAndroid, ActivityIndicator } from 'react-native';
+import { ScrollView, View, FlatList, StyleSheet, Text, TouchableOpacity, Pressable, TextInput, 
+  Alert, ToastAndroid, ActivityIndicator 
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import { globalStyles } from './estilos/estilologin.js';
+
 
 const ParametrosScreen = ({ navigation }) => {
   const [userData, setUserData] = useState([]);
-  const [selectedParametro, setSelectedParametro] = useState(null); // Estado para almacenar el parámetro seleccionado
   const [formState, setFormState] = useState({}); // Estado para almacenar el estado del formulario
   const [formMode, setFormMode] = useState('edit'); // Estado para controlar el modo del formulario (edit o add)
   const [showForm, setShowForm] = useState(false); // Estado para controlar la visibilidad del formulario
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => () => console.log("rerender screen"))
 
   const fetchData = async () => {
     if (loading) return;
@@ -43,13 +48,10 @@ const ParametrosScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
   const handleRefresh = () => {
-    // Función para volver a cargar los datos
     fetchData();
   };
 
@@ -139,7 +141,6 @@ const ParametrosScreen = ({ navigation }) => {
 
   // Función para manejar el click en un ítem de la lista
   const handleItemPress = (item) => {
-    setSelectedParametro(item); // Almacena el parámetro seleccionado en el estado
     setFormMode('edit'); // Cambia el modo del formulario a 'edit'
     setFormState({
       id: item.id, // Captura el id del parámetro seleccionado
@@ -215,7 +216,6 @@ const ParametrosScreen = ({ navigation }) => {
       setFormState({});
     }
     setShowForm(false); // Oculta el formulario después de guardar o cancelar
-    setSelectedParametro(null); // Limpia el parámetro seleccionado
   };
 
   // Función para cambiar el modo del formulario entre 'edit' y 'add'
@@ -247,151 +247,76 @@ const ParametrosScreen = ({ navigation }) => {
 
     return (
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.formContainer}>
-        <Text style={styles.formTitle}>{formMode === 'edit' ? 'Editar Parámetro' : 'Agregar Parámetro'}</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.formTitle}>{formMode === 'edit' ? 'Editar Parámetro' : 'Agregar Parámetro'}</Text>
 
-        {/* Nombre del Parámetro */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nombre del Parámetro</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre del Parámetro"
-            value={formState.nombre_parametro || ''}
-            onChangeText={(text) => handleInputChange('nombre_parametro', text)}
-          />
+          {/* Nombre del Parámetro */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Nombre del Parámetro</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nombre del Parámetro"
+              value={formState.nombre_parametro || ''}
+              onChangeText={(text) => handleInputChange('nombre_parametro', text)}
+            />
+          </View>
+
+          {/* Descripción */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Descripción</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Descripción"
+              value={formState.descripcion || ''}
+              onChangeText={(text) => handleInputChange('descripcion', text)}
+            />
+          </View>
+
+          
+          {/* Valor Mínimo */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Valor Mínimo</Text>
+            <TextInput
+              keyboardType='decimal-pad'
+              style={styles.input}
+              placeholder="Valor Mínimo"
+              value={formState.valor_minimo || ''}
+              onChangeText={(text) => handleInputChange('valor_minimo', text)}
+            />
+          </View>
+          {/* Valor Máximo */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Valor Máximo</Text>
+            <TextInput
+              keyboardType='decimal-pad'
+              style={styles.input}
+              placeholder="Valor Máximo"
+              value={formState.valor_maximo || ''}
+              onChangeText={(text) => handleInputChange('valor_maximo', text)}
+            />
+          </View>
+          
+          {/* Unidad de Medida */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Unidad de Medida</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Unidad de Medida"
+              value={formState.unidad_medida || ''}
+              onChangeText={(text) => handleInputChange('unidad_medida', text)}
+            />
+          </View>
+
+          <Pressable style={styles.saveButton} onPress={handleSubmit}>
+            {saving
+              ?<ActivityIndicator color="#fff" />
+              :<Text style={globalStyles.text}>{formMode === 'edit' ? 'Guardar' : 'Ingresar parámetros'}</Text>
+            }
+          </Pressable>
+          <Pressable style={styles.cancelButton} onPress={() => setShowForm(false)}>
+            <Text style={globalStyles.text}>Cancelar</Text>
+          </Pressable>
         </View>
-
-        {/* Descripción */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Descripción</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Descripción"
-            value={formState.descripcion || ''}
-            onChangeText={(text) => handleInputChange('descripcion', text)}
-          />
-        </View>
-
-        
-        {formMode === 'edit' ? (
-          formState.valor_maximo !== null && formState.valor_maximo !== '' && formState.valor_maximo!=='0.00' ? (
-            <>
-            {/* Valor Mínimo */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Valor Mínimo</Text>
-              <TextInput
-                keyboardType='decimal-pad'
-                style={styles.input}
-                placeholder="Valor Mínimo"
-                value={formState.valor_minimo || ''}
-                onChangeText={(text) => handleInputChange('valor_minimo', text)}
-              />
-            </View>
-            {/* Valor Máximo */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Valor Máximo</Text>
-              <TextInput
-                keyboardType='decimal-pad'
-                style={styles.input}
-                placeholder="Valor Máximo"
-                value={formState.valor_maximo || ''}
-                onChangeText={(text) => handleInputChange('valor_maximo', text)}
-              />
-            </View>
-
-            {/* Unidad de Medida */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Unidad de Medida</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Unidad de Medida"
-                value={formState.unidad_medida || ''}
-                onChangeText={(text) => handleInputChange('unidad_medida', text)}
-              />
-            </View>
-            {formState.estado_parametro !== null && formState.estado_parametro !== '' ?
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Estado del parámetro</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Estado del parámetro"
-                value={formState.estado_parametro || ''}
-                onChangeText={(text) => handleInputChange('estado_parametro', text)}
-              />
-            </View>
-            :''}
-            </>
-          ) : (
-            <>
-              {/* Estado del parámetro */}
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Estado del parámetro</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Estado del parámetro"
-                  value={formState.estado_parametro || ''}
-                  onChangeText={(text) => handleInputChange('estado_parametro', text)}
-                />
-              </View>
-            </>
-          )
-        ) : (
-          <>
-            {/* Modo No Edit */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Valor Mínimo</Text>
-              <TextInput
-                keyboardType='decimal-pad'
-                style={styles.input}
-                placeholder="Valor Mínimo"
-                value={formState.valor_minimo || ''}
-                onChangeText={(text) => handleInputChange('valor_minimo', text)}
-              />
-            </View>
-            {/* Valor Máximo */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Valor Máximo</Text>
-              <TextInput
-                keyboardType='decimal-pad'
-                style={styles.input}
-                placeholder="Valor Máximo"
-                value={formState.valor_maximo || ''}
-                onChangeText={(text) => handleInputChange('valor_maximo', text)}
-              />
-            </View>
-
-            {/* Unidad de Medida */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Unidad de Medida</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Unidad de Medida"
-                value={formState.unidad_medida || ''}
-                onChangeText={(text) => handleInputChange('unidad_medida', text)}
-              />
-            </View>
-            {/* Estado del parámetro */}
-            {/* <View style={styles.inputContainer}>
-              <Text style={styles.label}>Estado del parámetro</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Estado del parámetro"
-                value={formState.estado_parametro || ''}
-                onChangeText={(text) => handleInputChange('estado_parametro', text)}
-              />
-            </View> */}
-          </>
-        )}
-        <Pressable style={styles.saveButton} onPress={handleSubmit}>
-          {saving
-            ?<ActivityIndicator color="#fff" />
-            :<Text style={globalStyles.text}>{formMode === 'edit' ? 'Guardar' : 'Ingresar parámetros'}</Text>
-          }
-        </Pressable>
-        <Pressable style={styles.cancelButton} onPress={() => setShowForm(false)}>
-          <Text style={globalStyles.text}>Cancelar</Text>
-        </Pressable>
-      </View>
       </ScrollView>
     );
   };
@@ -412,10 +337,10 @@ const ParametrosScreen = ({ navigation }) => {
           }
           </Pressable>
           <Pressable style={styles.button} onPress={toggleFormMode}>
-          {saving
-            ?<ActivityIndicator color="#fff" />
-            :<Text style={globalStyles.text}><Icon name="add" size={20} color="#FFFF" /> Ingresar parámetros</Text>
-          }
+            {saving
+              ?<ActivityIndicator color="#fff" />
+              :<Text style={globalStyles.text}><Icon name="add" size={20} color="#FFFF" /> Ingresar parámetros</Text>
+            }
           </Pressable>
         </>
       )}

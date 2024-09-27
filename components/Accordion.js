@@ -4,7 +4,7 @@ import { View, Text, TouchableWithoutFeedback, StyleSheet, } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 
 const AccordionListItem = ({ title, children }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   
   const toggleListItem = () => setOpen(!open);
 
